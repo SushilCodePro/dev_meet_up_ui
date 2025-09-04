@@ -21,9 +21,9 @@ export default function Login() {
     }
   };
 
-  if (mutation.isLoading) return <div>Login user...</div>;
-  if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
-  if (mutation.isSuccess) return <div>User Logged in successfully!</div>;
+  // if (mutation.isLoading) return <div>Login user...</div>;
+  // if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
+  // if (mutation.isSuccess) return <div>User Logged in successfully!</div>;
 
   return (
     <div className="pt-20 pb-10 flex items-center justify-center bg-gray-100">
@@ -99,10 +99,12 @@ export default function Login() {
 
             <button
               type="submit"
+              disabled={mutation.isLoading}
               className="w-full py-2 mb-4 rounded bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
             >
-              Login
+              {mutation.isLoading? 'Logging ...': 'Login'}
             </button>
+            {mutation.isError && <div className="text-red-600">Error Login user: {mutation.error.message}</div>}
           </form>
 
           <button
