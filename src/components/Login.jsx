@@ -1,29 +1,32 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { loginAPI } from "../api/api.js";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [emailId, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const mutation = useMutation(loginAPI);
-  console.log('loginAPI mutation',mutation);
+  const mutation = useMutation({
+    mutationFn: loginAPI,
+  });
+
+  console.log('loginAPI mutation', mutation);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      const loginPayload = { email, password }
-      mutation.mutate(loginPayload,{
-        onSuccess:(res)={
-
-        },
-      });
+    if (emailId && password) {
+      const loginPayload = { emailId, password };
+      mutation.mutate(loginPayload);
     }
   };
 
+
   // if (mutation.isLoading) return <div>Login user...</div>;
   // if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
-  // if (mutation.isSuccess) return <div>User Logged in successfully!</div>;
+  if (mutation.isSuccess) {
+    console.log('login res', mutation.data);
+  }
 
   return (
     <div className="pt-20 pb-10 flex items-center justify-center bg-gray-100">
@@ -56,7 +59,7 @@ export default function Login() {
                 id="email"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="email"
-                value={email}
+                value={emailId}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -102,9 +105,9 @@ export default function Login() {
               disabled={mutation.isLoading}
               className="w-full py-2 mb-4 rounded bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
             >
-              {mutation.isLoading? 'Logging ...': 'Login'}
+              {mutation.isPending ? 'Logging ...' : 'Login'}
             </button>
-            {mutation.isError && <div className="text-red-600">Error Login user: {mutation.error.message}</div>}
+            {mutation.isError && <div className="text-red-600">Error Login user: {mutation?.error?.response?.data?.message}</div>}
           </form>
 
           <button
