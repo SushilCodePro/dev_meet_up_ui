@@ -5,7 +5,7 @@ import HomeFooter from '../components/HomeFooter'
 
 const Home = () => {
   return (
-    <div className="min-h-screen">
+    <div className="">
         <HomeNavbar/>
         <Login/>
         <HomeFooter/>

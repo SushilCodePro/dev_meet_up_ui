@@ -1,9 +1,29 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+
+  const mutation = useMutation(loginAPI);
+  console.log('loginAPI mutation',mutation);
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    if (email && password) {
+      const loginPayload = { email, password }
+      mutation.mutate(loginPayload,{
+        onSuccess:(res)={
+
+        },
+      });
+    }
+  };
+
+  if (mutation.isLoading) return <div>Login user...</div>;
+  if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
+  if (mutation.isSuccess) return <div>User Logged in successfully!</div>;
 
   return (
     <div className="pt-20 pb-10 flex items-center justify-center bg-gray-100">
@@ -11,7 +31,10 @@ export default function Login() {
         {/* Left image */}
         <div
           className="hidden md:block md:w-1/2 bg-cover bg-center"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506744038136-46273834b3fb)' }}
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1506744038136-46273834b3fb)",
+          }}
           aria-label="City view"
         ></div>
 
@@ -20,9 +43,12 @@ export default function Login() {
           <h2 className="flex items-center justify-center mb-6 text-xl font-semibold text-gray-700">
             Login to your account
           </h2>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleLoginSubmit}>
             <div>
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-600">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-medium text-gray-600"
+              >
                 Email
               </label>
               <input
@@ -36,7 +62,10 @@ export default function Login() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-600">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-600"
+              >
                 Password
               </label>
               <input
@@ -50,7 +79,10 @@ export default function Login() {
               />
             </div>
             <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-              <label className="flex items-center cursor-pointer select-none" htmlFor="rememberMe">
+              <label
+                className="flex items-center cursor-pointer select-none"
+                htmlFor="rememberMe"
+              >
                 <input
                   type="checkbox"
                   id="rememberMe"
