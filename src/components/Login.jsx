@@ -3,19 +3,21 @@ import { useMutation } from "@tanstack/react-query";
 import { loginAPI } from "../api/api.js";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [emailId, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const dispacth=useDispatch();
+  const dispatch = useDispatch();
+  const naviagte = useNavigate();
 
   const mutation = useMutation({
     mutationFn: loginAPI,
   });
 
-  console.log('loginAPI mutation', mutation);
+  console.log("loginAPI mutation", mutation);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -25,12 +27,10 @@ export default function Login() {
     }
   };
 
-
-  // if (mutation.isLoading) return <div>Login user...</div>;
-  // if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
   if (mutation.isSuccess) {
-    console.log('login res', mutation.data);
-    dispacth(addUser(mutation.data));
+    console.log("login res", mutation.data);
+    dispatch(addUser(mutation.data));
+    naviagte("/");
   }
 
   return (
@@ -110,10 +110,18 @@ export default function Login() {
               disabled={mutation.isLoading}
               className="w-full py-2 mb-4 rounded bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
             >
-              {mutation.isPending ? 'Logging ...' : 'Login'}
+              {mutation.isPending ? "Logging ..." : "Login"}
             </button>
-            {mutation.isError && <div className="text-red-600">Error Login user: {mutation?.error?.response?.data?.message}</div>}
-            {mutation.isSuccess && <div className="text-green-600">Login user: {mutation?.data?.message}</div>}
+            {mutation.isError && (
+              <div className="text-red-600">
+                Error Login user: {mutation?.error?.response?.data?.message}
+              </div>
+            )}
+            {mutation.isSuccess && (
+              <div className="text-green-600">
+                Login user: {mutation?.data?.message}
+              </div>
+            )}
           </form>
 
           <button
