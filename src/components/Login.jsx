@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { loginAPI } from "../api/api.js";
+import { useSelector, useDispatch } from "react-redux";
+import { addUser } from "../redux/userSlice.js";
 
 export default function Login() {
   const [emailId, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+
+  const dispacth=useDispatch();
 
   const mutation = useMutation({
     mutationFn: loginAPI,
@@ -26,6 +30,7 @@ export default function Login() {
   // if (mutation.isError) return <div>Error Login user: {mutation.error.message}</div>;
   if (mutation.isSuccess) {
     console.log('login res', mutation.data);
+    dispacth(addUser(mutation.data));
   }
 
   return (
@@ -108,6 +113,7 @@ export default function Login() {
               {mutation.isPending ? 'Logging ...' : 'Login'}
             </button>
             {mutation.isError && <div className="text-red-600">Error Login user: {mutation?.error?.response?.data?.message}</div>}
+            {mutation.isSuccess && <div className="text-green-600">Login user: {mutation?.data?.message}</div>}
           </form>
 
           <button
