@@ -6,34 +6,31 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import axios from 'axios';
 import { fetchProfile } from '../api/api';
+import { addUser, clearUser } from '../redux/userSlice';
 
 const Home = () => {
   const user=useSelector(state=>state.auth)
   const dispatch = useDispatch();
-  const naviagte = useNavigate();
-
-  // const fetchProfile=async ()=>{
-  //   try {
-  //     const res=axios.get('http://localhost:3000/user/profile/view/',{withCredentials:true});
-  //   } catch (error) {
-  //     console.log('error in getting profile',error);
-  //     naviagte('/login');
-  //   }
-  // }
+  const navigate = useNavigate();
 
 useEffect(() => {
   const getProfile = async () => {
     try {
       const res = await fetchProfile();
-      console.log("getting profile", res.data); // axios stores response in .data
+      console.log("getting profile", res.data); 
+      dispatch(addUser(res.data));
     } catch (error) {
       console.log("error in getting profile", error);
-      naviagte('/login')
+      dispatch(clearUser())
+
+        // if (error.response && error.response.status === 401) {
+          navigate("/login", { replace: true });
+        // }     
     }
   };
 
   getProfile();
-}, []);
+}, [navigate, dispatch]);
 
 
   return (
