@@ -1,6 +1,23 @@
 import React from "react";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import { clearUser } from "../redux/userSlice";
+import { logoutAPI } from "../api/api";
 
 const HomeNavbar = () => {
+const dispatch = useDispatch();
+const navigate = useNavigate();
+
+const handleLogout = async () => {
+  try {
+    const res=await logoutAPI();
+    console.log('Logout res: ',res);
+    dispatch(clearUser());
+    navigate("/login", { replace: true });
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
   return (
     <div className="navbar bg-black shadow-md text-white ">
       <div className="flex-1">
@@ -34,7 +51,7 @@ const HomeNavbar = () => {
               <a>Settings</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={handleLogout}>Logout</a>
             </li>
           </ul>
         </div>
