@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { loginAPI } from "../api/api.js";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,7 +11,7 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useDispatch();
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: loginAPI,
@@ -27,11 +27,14 @@ export default function Login() {
     }
   };
 
-  if (mutation.isSuccess) {
-    console.log("login res", mutation.data);
-    dispatch(addUser(mutation.data));
-    naviagte("/");
-  }
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      console.log("login res", mutation.data);
+      dispatch(addUser(mutation.data));
+      navigate("/");
+    }
+  }, [mutation.isSuccess]);
+  // mutation.isSuccess, mutation.data, dispatch, navigate
 
   return (
     <div className="pt-20 pb-10 flex items-center justify-center bg-gray-100">

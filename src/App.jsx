@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
+
   return (
     <Router>
       <Routes>
@@ -16,14 +17,13 @@ const App = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="login" element={<Login/>} />
         </Route> */}
-
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Home />}>
-            <Route index element={<Feed />} />       {/* protected */}
+            <Route index element={<Feed />} /> {/* protected */}
             <Route path="profile" element={<Profile />} /> {/* protected */}
           </Route>
         </Route>
-        <Route path="/login" element={<Login />} />  {/* public */}
+        <Route path="/login" element={<Login />} /> {/* public */}
       </Routes>
     </Router>
   );
