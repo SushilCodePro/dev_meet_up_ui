@@ -15,26 +15,22 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: loginAPI,
+    onSuccess: (data) => {
+      console.log("login res", data);
+      dispatch(addUser(data));
+      navigate("/");
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
   });
 
-  console.log("loginAPI mutation", mutation);
-
-  const handleLoginSubmit = async (e) => {
+  const handleLoginSubmit = (e) => {
     e.preventDefault();
     if (emailId && password) {
-      const loginPayload = { emailId, password };
-      mutation.mutate(loginPayload);
+      mutation.mutate({ emailId, password });
     }
   };
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      console.log("login res", mutation.data);
-      dispatch(addUser(mutation.data));
-      navigate("/");
-    }
-  }, [mutation.isSuccess]);
-  // mutation.isSuccess, mutation.data, dispatch, navigate
 
   return (
     <div className="pt-20 pb-10 flex items-center justify-center bg-gray-100">

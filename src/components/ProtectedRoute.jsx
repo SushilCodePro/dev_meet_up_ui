@@ -5,11 +5,13 @@ import { fetchProfile } from "../api/api";
 import { addUser, clearUser } from "../redux/userSlice";
 
 const ProtectedRoute = () => {
+  console.log('inside ProtectedRoute')
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true); // 🔹 new state
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
+    console.log('inside ProtectedRoute useEffect')
     const getProfile = async () => {
       try {
         const res = await fetchProfile();
@@ -19,7 +21,7 @@ const ProtectedRoute = () => {
         console.log("error in getting profile", error);
         dispatch(clearUser());
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -27,13 +29,15 @@ const ProtectedRoute = () => {
   }, []);
 
   if (loading) {
+    console.log('inside ProtectedRoute loading')
     return <div>Loading...</div>;
   }
 
   if (!isAuthenticated) {
+    console.log('inside ProtectedRoute auth')
     return <Navigate to="/login" replace />;
   }
-
+   console.log('inside ProtectedRoute before Outlet')
   return <Outlet />;
 };
 

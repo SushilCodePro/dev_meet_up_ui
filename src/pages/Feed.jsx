@@ -13,17 +13,18 @@ const Feed = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["feed"],
     queryFn: feedAPI,
-    // onSuccess: (data) => {
-    //   console.log("Feed fetched:", data);
-    //   dispatch(addFeed(data));
-    // },
-    // onError: (error) => {
-    //   console.error("Failed to fetch Feed:", error);
-    // },
+    onSuccess: (data) => {
+      console.log("Feed fetched:", data);
+      dispatch(addFeed(data));
+    },
+    onError: (error) => {
+      console.error("Failed to fetch Feed:", error);
+    },
   });
-  if(data){
-    dispatch(addFeed(data));
-  }
+
+  // if(data){
+  //   dispatch(addFeed(data));
+  // }
 
   if (isLoading) {
     return <span className="loading loading-spinner text-neutral"></span>
