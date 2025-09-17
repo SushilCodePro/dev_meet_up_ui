@@ -3,39 +3,43 @@ import { useSelector, useDispatch } from "react-redux";
 import { profileUpdateAPI } from "../api/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addUser } from "../redux/userSlice";
+import InputField from "../components/InputField";
 
 const Profile = () => {
-  const user = useSelector((state) => state.auth.user);
+  const { user } = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+  console.log("user from redux", user);
 
-  const [formData, setFormData] = useState({
-    firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    emailId: user.emailId || "",
+  const initialData = {
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    emailId: user?.emailId ?? "",
+    age: user?.age ?? "",
+    gender: user?.gender ?? "",
     password: "",
-    age: user.age || "",
-    gender: user.gender || "",
-  });
+  };
+  const [formData, setFormData] = useState(initialData);
+  console.log("formdata", formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-      const mutation = useMutation({
-      mutationFn: profileUpdateAPI,
-      onSuccess: (data) => {
-        dispatch(addUser(data));
-        console.log('profile update data',data);
-        // queryClient.invalidateQueries({ queryKey: ["profile"] });
-      },
-    });
+  const mutation = useMutation({
+    mutationFn: profileUpdateAPI,
+    onSuccess: (data) => {
+      dispatch(addUser(data));
+      console.log("profile update data", data);
+      // queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // const queryClient = useQueryClient();
     mutation.mutate(formData);
-    console.log('formdata',formData);
+    console.log("formdata", formData);
   };
 
   return (
@@ -43,70 +47,35 @@ const Profile = () => {
       <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            First Name
-          </label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Last Name
-          </label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="emailId"
-            value={formData.emailId}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter new password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Age</label>
-          <input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
+        <InputField
+          label="First Name"
+          type="text"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+        />
+        <InputField
+          label="Last Name"
+          type="text"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+        />
+        <InputField
+          label="Email"
+          type="email"
+          name="emailId"
+          value={formData.emailId}
+          onChange={handleChange}
+        />
+        <InputField
+          label="Password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          disabled={true}
+        />
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Gender
@@ -123,13 +92,25 @@ const Profile = () => {
             <option value="other">Other</option>
           </select>
         </div>
+        <InputField
+          label="Age"
+          type="number"
+          name="age"
+          value={formData.age}
+          onChange={handleChange}
+        />
 
         <button
           type="submit"
           className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
         >
-          Save Changes
+          {mutation.isPending ? "Updating ..." : "Save Changes"}
         </button>
+        {mutation.isSuccess && (
+          <p className="text-green-500 font-bold">
+            Profile updated succesfull !
+          </p>
+        )}
       </form>
     </div>
   );
