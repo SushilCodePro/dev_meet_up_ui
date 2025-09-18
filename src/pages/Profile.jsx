@@ -6,7 +6,7 @@ import { addUser } from "../redux/userSlice";
 import InputField from "../components/InputField";
 
 const Profile = () => {
-  const { user } = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   console.log("user from redux", user);
 
@@ -19,7 +19,7 @@ const Profile = () => {
     password: "",
   };
   const [formData, setFormData] = useState(initialData);
-  console.log("formdata", formData);
+  console.log("formdata11", formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +29,8 @@ const Profile = () => {
   const mutation = useMutation({
     mutationFn: profileUpdateAPI,
     onSuccess: (data) => {
-      dispatch(addUser(data));
+      dispatch(addUser(data.user));
+
       console.log("profile update data", data);
       // queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
@@ -44,9 +45,9 @@ const Profile = () => {
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-      <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
+      <h2 className="text-2xl font-bold mb-2 text-center">Edit Profile</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-1">
         <InputField
           label="First Name"
           type="text"
@@ -107,9 +108,11 @@ const Profile = () => {
           {mutation.isPending ? "Updating ..." : "Save Changes"}
         </button>
         {mutation.isSuccess && (
-          <p className="text-green-500 font-bold">
-            Profile updated succesfull !
-          </p>
+          <div className="toast toast-top toast-center">
+            <div className="alert alert-success">
+              <span>Profile updated</span>
+            </div>
+          </div>
         )}
       </form>
     </div>

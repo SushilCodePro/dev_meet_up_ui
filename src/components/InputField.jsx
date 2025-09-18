@@ -7,7 +7,7 @@ const InputField = ({ label, type, name, value, onChange, ...props }) => (
       value={value}
       onChange={onChange}
       {...props}
-      className="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+      className="w-full mt-1 p-1 border rounded-lg focus:ring-2 focus:ring-blue-500"
     />
   </div>
 );
