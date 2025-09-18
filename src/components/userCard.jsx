@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserCard = ({ user, handleIgnore }) => {
+const UserCard = ({ user, handleIgnore, handleInterested }) => {
   return (
     <div className="max-w-sm mx-auto mt-6 p-6 bg-white shadow-lg rounded-2xl border border-gray-200 hover:shadow-xl transition duration-300">
       <div className="flex items-center space-x-4">
@@ -23,11 +23,14 @@ const UserCard = ({ user, handleIgnore }) => {
       </div>
       <div className="flex w-full justify-between mt-4">
         <button
-        onClick={()=>handleIgnore(user._id)} 
-        className="bg-red-500 px-4 py-1 rounded-md hover:cursor-pointer hover:bg-red-600">
+          onClick={() => handleIgnore(user._id)}
+          className="bg-red-500 px-4 py-1 rounded-md hover:cursor-pointer hover:bg-red-600"
+        >
           Ignore
         </button>
-        <button className="bg-green-500 px-4 py-1 rounded-md hover:cursor-pointer hover:bg-green-600">
+        <button
+        onClick={()=>handleInterested(user._id)} 
+        className="bg-green-500 px-4 py-1 rounded-md hover:cursor-pointer hover:bg-green-600">
           Interested
         </button>
       </div>
