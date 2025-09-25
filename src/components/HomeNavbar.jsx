@@ -18,10 +18,16 @@ const handleLogout = async () => {
     console.error("Logout failed", error);
   }
 };
+
+const handleProfile=()=>{
+  navigate('/profile');
+}
   return (
     <div className="navbar bg-black shadow-md text-white ">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">DevMeetUp</a>
+        <a
+        onClick={()=>navigate('/')} 
+        className="btn btn-ghost text-xl">DevMeetUp</a>
       </div>
       <div className="flex gap-2 mr-10 text-black">
         <div className="dropdown dropdown-end">
@@ -42,7 +48,10 @@ const handleLogout = async () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a className="justify-between">
+              <a
+              onClick={handleProfile} 
+              className="justify-between"
+              >
                 Profile
                 <span className="badge">New</span>
               </a>

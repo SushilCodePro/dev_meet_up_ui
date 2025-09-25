@@ -1,42 +1,71 @@
-import React, { useEffect } from 'react'
-import { feedAPI } from '../api/api'
-import { useQuery } from '@tanstack/react-query'
-import { useSelector,useDispatch } from 'react-redux'
-import { addFeed } from '../redux/feedSlice'
-import UserCard from '../components/userCard'
+import React, {useEffect}from "react";
+import { feedAPI, sendRequestAPI } from "../api/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSelector, useDispatch } from "react-redux";
+import { addFeed } from "../redux/feedSlice";
+import UserCard from "../components/userCard";
+
 
 const Feed = () => {
-  const {data:feedData}=useSelector(state=>state.feed.value);
-  console.log('feedata',feedData);
-  const dispatch=useDispatch();
+  const {data:feedData} = useSelector((state) => state.feed.value); 
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["feed"],
     queryFn: feedAPI,
-    // onSuccess: (data) => {
-    //   console.log("Feed fetched:", data);
-    //   dispatch(addFeed(data));
-    // },
-    // onError: (error) => {
-    //   console.error("Failed to fetch Feed:", error);
-    // },
   });
-  if(data){
-    dispatch(addFeed(data));
-  }
+
+  useEffect(() => {
+    if (data) {
+      dispatch(addFeed(data));
+      console.log("feed Data:", data);
+    }
+    if (isError) {
+      console.error("feed error:", error);
+    }
+  }, [data, isError]);
+ 
+  const requestMutation = useMutation({
+    mutationFn: sendRequestAPI,
+    onSuccess: (res, variables) => {
+      console.log("request success", res);
+      // dispatch(removeUserFromFeed(variables.toUserId));
+      // or refetch query if you want fresh data from backend
+      queryClient.invalidateQueries(["feed"]);
+    },
+    onError: (err) => {
+      console.error("Ignore failed", err);
+    },
+  });
+
+  const handleIgnore = (userId) => {
+    requestMutation.mutate({ status: "ignored", toUserId: userId });
+  };
+  const handleInterested = (userId) => {
+    requestMutation.mutate({ status: "interested", toUserId: userId });
+  };
 
   if (isLoading) {
-    return <span className="loading loading-spinner text-neutral"></span>
+    return <span className="loading loading-spinner text-neutral"></span>;
   }
 
-  console.log("feed data", data);
+  if (isError) {
+    return <p className="text-red-500">Failed to load feed</p>;
+  }
+
   return (
     <div>
-      {feedData && feedData.map(user=>(
-        <UserCard user={user} key={user._id}/>
+      {feedData?.map((user) => (
+        <UserCard
+          user={user}
+          key={user._id}
+          handleIgnore={() => handleIgnore(user._id)}
+          handleInterested={() => handleInterested(user._id)}
+        />
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;

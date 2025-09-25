@@ -15,15 +15,20 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: loginAPI,
+    onSuccess: (data) => {
+      console.log("login res", data);
+      dispatch(addUser(data));
+      navigate("/");
+    },
+    onError: (error) => {
+      console.error("Login failed:", error);
+    },
   });
 
-  console.log("loginAPI mutation", mutation);
-
-  const handleLoginSubmit = async (e) => {
+  const handleLoginSubmit = (e) => {
     e.preventDefault();
     if (emailId && password) {
-      const loginPayload = { emailId, password };
-      mutation.mutate(loginPayload);
+      mutation.mutate({ emailId, password });
     }
   };
 
