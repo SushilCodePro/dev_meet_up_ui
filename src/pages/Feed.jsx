@@ -1,13 +1,12 @@
-import React, {useEffect}from "react";
+import React, { useEffect } from "react";
 import { feedAPI, sendRequestAPI } from "../api/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { addFeed } from "../redux/feedSlice";
 import UserCard from "../components/userCard";
 
-
 const Feed = () => {
-  const {data:feedData} = useSelector((state) => state.feed.value); 
+  const { data: feedData } = useSelector((state) => state.feed.value);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
@@ -25,14 +24,15 @@ const Feed = () => {
       console.error("feed error:", error);
     }
   }, [data, isError]);
- 
-  const requestMutation = useMutation({
+
+  const userMutation = useMutation({
     mutationFn: sendRequestAPI,
     onSuccess: (res, variables) => {
-      console.log("request success", res);
+      console.log("user success", res);
       // dispatch(removeUserFromFeed(variables.toUserId));
       // or refetch query if you want fresh data from backend
       queryClient.invalidateQueries(["feed"]);
+      queryClient.invalidateQueries(["user"]);
     },
     onError: (err) => {
       console.error("Ignore failed", err);
@@ -40,10 +40,10 @@ const Feed = () => {
   });
 
   const handleIgnore = (userId) => {
-    requestMutation.mutate({ status: "ignored", toUserId: userId });
+    userMutation.mutate({ status: "ignored", toUserId: userId });
   };
   const handleInterested = (userId) => {
-    requestMutation.mutate({ status: "interested", toUserId: userId });
+    userMutation.mutate({ status: "interested", toUserId: userId });
   };
 
   if (isLoading) {
@@ -58,10 +58,15 @@ const Feed = () => {
     <div>
       {feedData?.map((user) => (
         <UserCard
-          user={user}
           key={user._id}
-          handleIgnore={() => handleIgnore(user._id)}
-          handleInterested={() => handleInterested(user._id)}
+          firstName={user?.firstName}
+          lastName={user?.lastName}
+          age={user?.age}
+          gender={user?.gender}
+          leftStatus="Ignore"
+          rightStatus="Interested"
+          handleLeftStatus={() => handleIgnore(user._id)}
+          handleRightStatus={() => handleInterested(user._id)}
         />
       ))}
     </div>

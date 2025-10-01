@@ -6,6 +6,7 @@ import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import Login from "./components/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Network from "./pages/Network";
 
 const App = () => {
 
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/" element={<Home />}>
             <Route index element={<Feed />} /> {/* protected */}
             <Route path="profile" element={<Profile />} /> {/* protected */}
+            <Route path="network" element={<Network/>} />
           </Route>
         </Route>
         <Route path="/login" element={<Login />} /> {/* public */}

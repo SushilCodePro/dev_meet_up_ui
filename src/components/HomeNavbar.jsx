@@ -20,7 +20,11 @@ const handleLogout = async () => {
 };
 
 const handleProfile=()=>{
-  navigate('/profile');
+  navigate('profile');
+}
+
+const handleNetwork= ()=>{
+  navigate('network');
 }
   return (
     <div className="navbar bg-black shadow-md text-white ">
@@ -57,7 +61,7 @@ const handleProfile=()=>{
               </a>
             </li>
             <li>
-              <a>Settings</a>
+              <a onClick={handleNetwork}>Recieved Request</a>
             </li>
             <li>
               <a onClick={handleLogout}>Logout</a>
