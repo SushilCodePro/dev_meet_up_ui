@@ -22,7 +22,7 @@ const Network = () => {
     queryKey: ["connection"],
     queryFn: myConnectionAPI,
   });
-  console.log("got request: ", requestData);
+
   const queryClient = useQueryClient();
 
   const gotRequestMutation = useMutation({
@@ -32,56 +32,80 @@ const Network = () => {
       queryClient.invalidateQueries(["connection"]);
     },
   });
-console.log("my connection: ", connectionData);
+
   const handleAccept = (userId) => {
-    console.log("accprt req id", userId)
     gotRequestMutation.mutate({ status: "accepted", requestedId: userId });
   };
+
   const handleReject = (userId) => {
     gotRequestMutation.mutate({ status: "interested", requestedId: userId });
   };
 
-  if (isRequestLoading && isConnectionLoading) {
-    return <p>Loading...</p>;
+  if (isRequestLoading || isConnectionLoading) {
+    return <p className="text-center py-8 text-gray-600">Loading...</p>;
   }
 
-   if (isRequestError) return <p>Error: {requestError.message}</p>;
+  if (isRequestError) return <p>Error: {requestError.message}</p>;
+  if (isConnectionError) return <p>Error: {connectionError.message}</p>;
 
-//   if (requestData?.data?.length === 0) {
-//     return <p>No connection requests found</p>;
-//   }
-
-//   if (isRequestError) {
-//     return <p>Error in Request API: {requestError.message}</p>;
-//   }
-
-//   if (isConnectionError) {
-//     return <p>Error in Connection API: {connectionError.message}</p>;
-//   }
   return (
-    <div>
-      {(requestData?.data?.length === 0) ? <p>No requests found</p> :requestData?.data &&
-        requestData?.data.map((request) => (
-          <UserCard
-            key={request._id}
-            firstName={request?.fromUserId?.firstName}
-            lastName={request?.fromUserId?.lastName}
-            age={request?.fromUserId?.age}
-            gender={request?.fromUserId?.gender}
-            leftStatus="Accept"
-            rightStatus="Reject"
-            handleLeftStatus={() => handleAccept(request._id)}
-            handleRightStatus={() => handleReject(request._id)}
-          />
-        ))}
-      <div>
-        <p>My connections</p>
-        {connectionData&& connectionData.data.map((user)=>(
-            <div key={user._id} className="bg-gray-300 rounded-md mb-2 shadow-2xl">
-                <p>Name: {user?.fromUserId?.firstName}  </p>
-                <p>Age : {user?.fromUserId?.age} </p>
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold mb-6 text-center">My Network</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Requests Section */}
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <h2 className="text-xl font-semibold mb-4 border-b pb-2">
+            Connection Requests
+          </h2>
+
+          {requestData?.data?.length === 0 ? (
+            <p className="text-gray-500">No requests found</p>
+          ) : (
+            <div className="space-y-4">
+              {requestData?.data?.map((request) => (
+                <UserCard
+                  key={request._id}
+                  firstName={request?.fromUserId?.firstName}
+                  lastName={request?.fromUserId?.lastName}
+                  age={request?.fromUserId?.age}
+                  gender={request?.fromUserId?.gender}
+                  leftStatus="Accept"
+                  rightStatus="Reject"
+                  handleLeftStatus={() => handleAccept(request._id)}
+                  handleRightStatus={() => handleReject(request._id)}
+                />
+              ))}
             </div>
-        ))}
+          )}
+        </div>
+
+        {/* Connections Section */}
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <h2 className="text-xl font-semibold mb-4 border-b pb-2">
+            My Connections
+          </h2>
+
+          {connectionData?.data?.length === 0 ? (
+            <p className="text-gray-500">No connections yet</p>
+          ) : (
+            <div className="space-y-4">
+              {connectionData?.data?.map((user) => (
+                <div
+                  key={user._id}
+                  className="bg-gray-100 rounded-lg p-4 shadow-md hover:shadow-lg transition"
+                >
+                  <p className="text-lg font-medium text-gray-800">
+                    {user?.fromUserId?.firstName} {user?.fromUserId?.lastName}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Age: {user?.fromUserId?.age} | {user?.fromUserId?.gender.charAt(0).toUpperCase()} 
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

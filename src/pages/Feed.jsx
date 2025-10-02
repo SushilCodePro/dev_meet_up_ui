@@ -29,8 +29,6 @@ const Feed = () => {
     mutationFn: sendRequestAPI,
     onSuccess: (res, variables) => {
       console.log("user success", res);
-      // dispatch(removeUserFromFeed(variables.toUserId));
-      // or refetch query if you want fresh data from backend
       queryClient.invalidateQueries(["feed"]);
       queryClient.invalidateQueries(["user"]);
     },
@@ -47,28 +45,42 @@ const Feed = () => {
   };
 
   if (isLoading) {
-    return <span className="loading loading-spinner text-neutral"></span>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <span className="loading loading-spinner text-blue-500 w-10 h-10"></span>
+      </div>
+    );
   }
 
   if (isError) {
-    return <p className="text-red-500">Failed to load feed</p>;
+    return <p className="text-center text-red-500 font-medium py-6">Failed to load feed</p>;
   }
 
   return (
-    <div>
-      {feedData?.map((user) => (
-        <UserCard
-          key={user._id}
-          firstName={user?.firstName}
-          lastName={user?.lastName}
-          age={user?.age}
-          gender={user?.gender}
-          leftStatus="Ignore"
-          rightStatus="Interested"
-          handleLeftStatus={() => handleIgnore(user._id)}
-          handleRightStatus={() => handleInterested(user._id)}
-        />
-      ))}
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">
+        People You May Know
+      </h1>
+
+      {feedData?.length === 0 ? (
+        <p className="text-center text-gray-500">No users found</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {feedData?.map((user) => (
+            <UserCard
+              key={user._id}
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+              age={user?.age}
+              gender={user?.gender}
+              leftStatus="Ignore"
+              rightStatus="Interested"
+              handleLeftStatus={() => handleIgnore(user._id)}
+              handleRightStatus={() => handleInterested(user._id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

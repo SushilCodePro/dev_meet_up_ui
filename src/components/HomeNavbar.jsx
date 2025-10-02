@@ -61,7 +61,7 @@ const handleNetwork= ()=>{
               </a>
             </li>
             <li>
-              <a onClick={handleNetwork}>Recieved Request</a>
+              <a onClick={handleNetwork}>My Network</a>
             </li>
             <li>
               <a onClick={handleLogout}>Logout</a>

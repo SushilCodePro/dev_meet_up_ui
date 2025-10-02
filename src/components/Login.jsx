@@ -1,50 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { loginAPI } from "../api/api.js";
+import { loginAPI, signupAPI } from "../api/api.js";
 import { useSelector, useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice.js";
 import { useNavigate } from "react-router-dom";
+import { Typewriter } from "react-simple-typewriter";
 
-export default function Login() {
+export default function Auth() {
+  const [isLogin, setIsLogin] = useState(true); // toggle login/signup
   const [emailId, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Decide which API to call based on login/signup
   const mutation = useMutation({
-    mutationFn: loginAPI,
+    mutationFn: isLogin
+      ? loginAPI
+      : signupAPI,
     onSuccess: (data) => {
-      console.log("login res", data);
+      console.log(isLogin ? "login res" : "signup res", data);
       dispatch(addUser(data));
       navigate("/");
     },
     onError: (error) => {
-      console.error("Login failed:", error);
+      console.error("Auth failed:", error);
     },
   });
 
-  const handleLoginSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (emailId && password) {
-      mutation.mutate({ emailId, password });
+    if (isLogin) {
+      if (emailId && password) {
+        mutation.mutate({ emailId, password });
+      }
+    } else {
+      if (firstName && lastName && emailId && password && age && gender) {
+        mutation.mutate({ firstName, lastName, emailId, password, age, gender });
+      }
     }
   };
 
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      console.log("login res", mutation.data);
-      dispatch(addUser(mutation.data));
-      navigate("/");
-    }
-  }, [mutation.isSuccess]);
-  // mutation.isSuccess, mutation.data, dispatch, navigate
-// let bgUrl='https://user-gen-media-assets.s3.amazonaws.com/seedream_images/fc06f9df-1582-4505-a60d-6536722a2dc1.png'
   return (
     <div className="h-screen bg-[url('https://static.vecteezy.com/system/resources/previews/059/568/823/non_2x/futuristic-ai-concept-with-glowing-brain-on-circuit-board-for-innovation-and-technology-design-photo.jpg')] bg-cover bg-center">
-      <div className=" bg-none pt-20 pb-10 flex items-center justify-center">
-        <div className="h-[450px] max-w-3xl w-full bg-white rounded-lg shadow-lg flex overflow-hidden">
+      
+      {/* Typewriter Title */}
+      <h1 className="text-2xl font-bold text-black absolute top-24 left-1/3 transform -translate-x-1/2 whitespace-pre-wrap text-center">
+        <Typewriter
+          words={isLogin ? ['Welcome to the Developers\nPoint'] : ['Create your\nDeveloper Account']}
+          loop={true}
+          cursor
+          cursorStyle="|"
+          typeSpeed={80}
+          deleteSpeed={50}
+          delaySpeed={1500}
+        />
+      </h1>
+
+      <div className="pt-20 pb-10 flex items-center justify-center">
+        <div className="h-[500px] max-w-3xl w-full bg-white rounded-lg shadow-lg flex overflow-hidden">
           {/* Left image */}
           <div
             className="hidden md:block md:w-1/2 bg-cover bg-center"
@@ -58,120 +78,132 @@ export default function Login() {
           {/* Right form */}
           <div className="w-full md:w-1/2 p-6">
             <h2 className="flex items-center justify-center mb-6 text-xl font-semibold text-gray-700">
-              Login to your account
+              {isLogin ? "Login to your account" : "Sign up for a new account"}
             </h2>
-            <form className="space-y-4" onSubmit={handleLoginSubmit}>
+
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              {!isLogin && (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="First Name"
+                      className="w-1/2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Last Name"
+                      className="w-1/2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      placeholder="Age"
+                      className="w-1/2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      required
+                    />
+                    <select
+                      className="w-1/2 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-600"
-                >
+                <label className="block mb-2 text-sm font-medium text-gray-600">
                   Email
                 </label>
                 <input
                   type="email"
-                  id="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="email"
                   value={emailId}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
+
               <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-600"
-                >
+                <label className="block mb-2 text-sm font-medium text-gray-600">
                   Password
                 </label>
                 <input
                   type="password"
-                  id="password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <label
-                  className="flex items-center cursor-pointer select-none"
-                  htmlFor="rememberMe"
-                >
-                  <input
-                    type="checkbox"
-                    id="rememberMe"
-                    checked={rememberMe}
-                    onChange={() => setRememberMe(!rememberMe)}
-                    className="mr-2 rounded-sm accent-indigo-600 focus:ring-indigo-500"
-                  />
-                  Remember me
-                </label>
-                <a href="#" className="hover:underline">
-                  Forgot password?
-                </a>
-              </div>
+
+              {isLogin && (
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                  <label className="flex items-center cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
+                      className="mr-2 rounded-sm accent-indigo-600 focus:ring-indigo-500"
+                    />
+                    Remember me
+                  </label>
+                  <a href="#" className="hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
+              )}
 
               <button
                 type="submit"
                 disabled={mutation.isLoading}
                 className="w-full py-2 mb-4 rounded bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
               >
-                {mutation.isPending ? "Logging ..." : "Login"}
+                {mutation.isLoading ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
               </button>
+
               {mutation.isError && (
                 <div className="text-red-600">
-                  Error Login user: {mutation?.error?.response?.data?.message}
+                  Error: {mutation?.error?.response?.data?.message || "Something went wrong"}
                 </div>
               )}
+
               {mutation.isSuccess && (
                 <div className="text-green-600">
-                  Login user: {mutation?.data?.message}
+                  Success: {mutation?.data?.message}
                 </div>
               )}
             </form>
 
-            <button
-              type="button"
-              className="flex items-center justify-center w-full py-2 border border-gray-300 rounded cursor-pointer hover:bg-gray-50 transition"
-            >
-              <svg
-                className="w-5 h-4 mr-3"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 488 512"
-                aria-hidden="true"
-              >
-                <path
-                  fill="#4285F4"
-                  d="M488 261.8c0-15.3-1.4-30.1-4-44.3H249v83.9h134.7c-5.8 31.2-23 57.4-49 75.1v62.3h79.3c46.4-42.7 73.3-105.7 73.3-177z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M249 492c66.2 0 121.8-21.9 162.4-59.6l-79.3-62.3c-22.2 14.9-50.7 23.8-83.1 23.8-63.7 0-117.7-43.1-137-101.2H29.3v63.5C69.9 448.5 153.5 492 249 492z"
-                />
-                <path
-                  fill="#FBBC04"
-                  d="M112 298.7c-7.8-22.6-7.8-47 0-69.6V165.6H29.3c-27.2 54.4-27.2 119.2 0 173.6L112 298.7z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M249 97.5c35.9 0 68.3 12.4 93.8 36.9l70.2-70.2C371.3 24.1 314.5 0 249 0 153.5 0 69.9 43.5 29.3 108.9l82.8 63.5c19.3-58.1 73.3-101.2 137-101.2z"
-                />
-              </svg>
-              Login with Google
-            </button>
-
             <p className="text-center text-sm text-gray-500 mt-4">
-              <a href="#" className="hover:underline">
-                Create new account
-              </a>
+              {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+              <button
+                className="text-indigo-600 hover:underline font-medium cursor-pointer"
+                onClick={() => setIsLogin(!isLogin)}
+              >
+                {isLogin ? "Create new account" : "Login here"}
+              </button>
             </p>
           </div>
         </div>
       </div>
     </div>
-
   );
 }
