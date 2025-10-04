@@ -18,11 +18,7 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (res) => res.data,
   (error) => {
-    // Central error handling/logging
     console.error('API call failed:', error.response?.data || error.message);
-    if (error.response?.status === 401) {
-      // Optionally handle logout or token refresh here
-    }
     return Promise.reject(error);
   }
 );

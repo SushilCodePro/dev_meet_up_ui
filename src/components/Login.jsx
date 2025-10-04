@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState} from "react";
 import { useMutation } from "@tanstack/react-query";
 import { loginAPI, signupAPI } from "../api/api.js";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice.js";
 import { useNavigate } from "react-router-dom";
 import { Typewriter } from "react-simple-typewriter";
