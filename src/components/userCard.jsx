@@ -33,13 +33,13 @@ const UserCard = ({
       <div className="flex w-full justify-between mt-5">
         <button
           onClick={handleLeftStatus}
-          className="flex-1 mr-2 px-4 py-2 rounded-xl bg-red-400 hover:bg-black text-white font-medium shadow  cursor-pointer transition"
+          className="flex-1 mr-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow  cursor-pointer transition"
         >
           {leftStatus}
         </button>
         <button
           onClick={handleRightStatus}
-          className="flex-1 ml-2 px-4 py-2 rounded-xl bg-green-400 hover:bg-green-800 text-white font-medium shadow cursor-pointer   transition"
+          className="flex-1 ml-2 px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow cursor-pointer   transition"
         >
           {rightStatus}
         </button>
