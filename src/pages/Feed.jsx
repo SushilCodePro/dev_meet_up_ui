@@ -57,7 +57,7 @@ const Feed = () => {
   }
 
   return (
-    <div className="container mx-auto px-2 py-4">
+    <div className="px-2 py-4 bg-gray-100">
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">
         People You May Know
       </h1>

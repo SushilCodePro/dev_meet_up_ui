@@ -11,7 +11,7 @@ const UserCard = ({
   handleRightStatus,
 }) => {
   return (
-    <div className="max-w-sm mx-auto mt-6 p-6 bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-lg transition duration-300">
+    <div className="w-72 mx-auto mt-6 p-6 bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-lg transition duration-300">
       {/* Avatar + Info */}
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
