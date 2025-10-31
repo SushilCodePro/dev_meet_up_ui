@@ -11,7 +11,7 @@ const UserCard = ({
   handleRightStatus,
 }) => {
   return (
-    <div className="max-w-sm mx-auto mt-6 p-6 bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-lg transition duration-300">
+    <div className="w-72 mx-auto mt-6 p-6 bg-white shadow-md rounded-2xl border border-gray-200 hover:shadow-lg transition duration-300">
       {/* Avatar + Info */}
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
@@ -33,13 +33,13 @@ const UserCard = ({
       <div className="flex w-full justify-between mt-5">
         <button
           onClick={handleLeftStatus}
-          className="flex-1 mr-2 px-4 py-2 rounded-xl bg-red-400 hover:bg-black text-white font-medium shadow  cursor-pointer transition"
+          className="flex-1 mr-2 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow  cursor-pointer transition"
         >
           {leftStatus}
         </button>
         <button
           onClick={handleRightStatus}
-          className="flex-1 ml-2 px-4 py-2 rounded-xl bg-green-400 hover:bg-green-800 text-white font-medium shadow cursor-pointer   transition"
+          className="flex-1 ml-2 px-4 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow cursor-pointer   transition"
         >
           {rightStatus}
         </button>

@@ -70,10 +70,10 @@ const Network = () => {
                   lastName={request?.fromUserId?.lastName}
                   age={request?.fromUserId?.age}
                   gender={request?.fromUserId?.gender}
-                  leftStatus="Accept"
-                  rightStatus="Reject"
-                  handleLeftStatus={() => handleAccept(request._id)}
-                  handleRightStatus={() => handleReject(request._id)}
+                  leftStatus="Reject"
+                  rightStatus="Accept"
+                  handleLeftStatus={() => handleReject(request._id)}
+                  handleRightStatus={()=> handleAccept(request._id)}
                 />
               ))}
             </div>
