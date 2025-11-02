@@ -1,6 +1,7 @@
 import apiClient from "./httpClient";
 
 export const loginAPI= (data)=>apiClient.post('/user/auth/signin',data);
+export const checkCookie = () => apiClient.get('/auth/check');
 export const signupAPI= (data)=>apiClient.post('/user/auth/signup',data);
 export const fetchProfile =()=>apiClient.get('/user/profile/view/');
 export const logoutAPI =()=>apiClient.get('/user/auth/logout/');
