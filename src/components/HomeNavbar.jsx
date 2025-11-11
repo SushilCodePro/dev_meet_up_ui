@@ -13,7 +13,7 @@ const handleLogout = async () => {
     const res=await logoutAPI();
     console.log('Logout res: ',res);
     dispatch(clearUser());
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   } catch (error) {
     console.error("Logout failed", error);
   }
@@ -30,7 +30,7 @@ const handleNetwork= ()=>{
     <div className="navbar bg-black shadow-md text-white ">
       <div className="flex-1">
         <a
-        onClick={()=>navigate('/')} 
+        onClick={()=>navigate('feed')} 
         className="btn btn-ghost text-xl">DevMeetUp</a>
       </div>
       <div className="flex gap-2 mr-10 text-black">

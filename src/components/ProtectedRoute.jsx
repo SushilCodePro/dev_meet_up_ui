@@ -35,7 +35,7 @@ const ProtectedRoute = () => {
 
   if (!isAuthenticated) {
     console.log('inside ProtectedRoute auth')
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
    console.log('inside ProtectedRoute before Outlet')
   return <Outlet />;

@@ -27,7 +27,7 @@ export default function Auth() {
     onSuccess: (data) => {
       console.log(isLogin ? "login res" : "signup res", data);
       dispatch(addUser(data));
-      navigate("/");
+      navigate("/feed");
     },
     onError: (error) => {
       console.error("Auth failed:", error);

@@ -14,15 +14,14 @@ import {
 } from "react-router-dom";
 
 const router = createBrowserRouter([
-  { path: "/login", element: <Login /> },
+  { path: "/", element: <Login /> },
   {
     element: <ProtectedRoute />,  // applies protection
     children: [
-      {
-        path: "/",
+      {        
         element: <Home />,  // layout
         children: [
-          { index: true, element: <Feed /> },
+          { path: "feed", element: <Feed /> },
           { path: "profile", element: <Profile /> },
           { path: "network", element: <Network /> },
         ],
