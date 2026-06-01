@@ -81,7 +81,7 @@ export default function Auth() {
               {isLogin ? "Login to your account" : "Sign up for a new account"}
             </h2>
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-4 text-black" onSubmit={handleSubmit}>
               {!isLogin && (
                 <>
                   <div className="flex gap-2">

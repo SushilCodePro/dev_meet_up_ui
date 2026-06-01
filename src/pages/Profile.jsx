@@ -13,10 +13,11 @@ const Profile = () => {
   const initialData = {
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
-    emailId: user?.emailId ?? "",
+    // emailId: user?.emailId ?? "",
     age: user?.age ?? "",
     gender: user?.gender ?? "",
-    password: "",
+    // password: "",
+    skills: user?.skills?.join(", ") ?? "",
   };
   const [formData, setFormData] = useState(initialData);
   console.log("formdata11", formData);
@@ -38,9 +39,19 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const queryClient = useQueryClient();
-    mutation.mutate(formData);
-    console.log("formdata", formData);
+
+    const payload = {
+      ...formData,
+
+      skills: formData.skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter(Boolean),
+    };
+
+    mutation.mutate(payload);
+
+    console.log("payload", payload);
   };
 
   return (
@@ -62,20 +73,28 @@ const Profile = () => {
           value={formData.lastName}
           onChange={handleChange}
         />
-        <InputField
+        {/* <InputField
           label="Email"
           type="email"
           name="emailId"
           value={formData.emailId}
           onChange={handleChange}
-        />
-        <InputField
+        /> */}
+        {/* <InputField
           label="Password"
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
           disabled={true}
+        /> */}
+        <InputField
+          label="Skills"
+          type="text"
+          name="skills"
+          value={formData.skills}
+          onChange={handleChange}
+          placeholder='Nodejs, JavaScript, C++'
         />
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -114,6 +133,7 @@ const Profile = () => {
             </div>
           </div>
         )}
+        {mutation.isError && <p className="text-red-500"> Error</p>}
       </form>
     </div>
   );
