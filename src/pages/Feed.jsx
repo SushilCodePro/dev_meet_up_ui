@@ -52,10 +52,33 @@ const Feed = () => {
     );
   }
 
-  if (isError) {
-    return <p className="text-center text-red-500 font-medium py-6">Failed to load feed</p>;
-  }
+  // if (isError) {
+  //   return <p className="text-center text-red-500 font-medium py-6">Failed to load feed</p>;
+  // }
+if (isError) {
+  const isCookieIssue =
+    error?.response?.status === 401;
 
+  return (
+    <div className="text-center py-6">
+      {isCookieIssue ? (
+        <div className="space-y-3">
+          <p className="text-red-500 font-medium">
+            Browser blocked authentication cookies.
+          </p>
+
+          <p className="text-sm text-gray-600">
+            Please allow third-party cookies and refresh the page.
+          </p>
+        </div>
+      ) : (
+        <p className="text-red-500 font-medium">
+          Failed to load feed
+        </p>
+      )}
+    </div>
+  );
+}
   return (
     <div className="px-2 py-4 bg-gray-100">
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-8">
