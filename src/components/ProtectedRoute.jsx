@@ -13,6 +13,12 @@ const ProtectedRoute = () => {
   useEffect(() => {
     console.log('inside ProtectedRoute useEffect')
     const getProfile = async () => {
+      // already logged in in redux
+      if (isAuthenticated) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const res = await fetchProfile();
         console.log("getting profile", res.user);
