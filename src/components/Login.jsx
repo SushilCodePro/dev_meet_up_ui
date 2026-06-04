@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { loginAPI, signupAPI } from "../api/api.js";
 import { useDispatch } from "react-redux";
@@ -27,7 +27,14 @@ export default function Auth() {
     onSuccess: (data) => {
       console.log(isLogin ? "login res" : "signup res", data);
       dispatch(addUser(data));
-      navigate("/feed");
+      if (isLogin) {
+        // login success
+        navigate("/feed");
+      } else {
+        // signup success
+        setIsLogin(true); // switch to login form
+        navigate("/");   // auth/login page
+      }
     },
     onError: (error) => {
       console.error("Auth failed:", error);
@@ -49,7 +56,7 @@ export default function Auth() {
 
   return (
     <div className="h-screen bg-[url('https://static.vecteezy.com/system/resources/previews/059/568/823/non_2x/futuristic-ai-concept-with-glowing-brain-on-circuit-board-for-innovation-and-technology-design-photo.jpg')] bg-cover bg-center">
-      
+
       {/* Typewriter Title */}
       <h1 className="text-2xl font-bold text-black absolute top-24 left-1/3 transform -translate-x-1/2 whitespace-pre-wrap text-center">
         <Typewriter
