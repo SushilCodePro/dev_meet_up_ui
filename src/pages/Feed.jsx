@@ -1,7 +1,7 @@
 // Feed.jsx
 import React, { useEffect } from "react";
 import { feedAPI } from "../api/api";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { addFeed } from "../redux/feedSlice";
 import UserCard from "../components/userCard";
@@ -32,31 +32,36 @@ const SkeletonCard = () => (
 );
 
 const Feed = () => {
-  const { data: feedData } = useSelector((state) => state.feed.value);
-  const dispatch = useDispatch();
 
   const {
     data,
     isLoading,
     isError,
     error,
-    refetch
-  } = useQuery({
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["feed"],
+
     queryFn: feedAPI,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+
+    initialPageParam: 1,
+
+    getNextPageParam: (lastPage) => {
+      console.log("lastPage", lastPage);
+      return lastPage.hasMore
+        ? lastPage.page + 1
+        : undefined;
+    },
+
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (data) {
-      dispatch(addFeed(data));
-    }
-    if (isError) {
-      console.error("Feed load error:", error);
-    }
-  }, [data, isError, dispatch]);
-
+  const feedData = data?.pages?.flatMap((page) => page.users) || [];
+  console.log('feedDataf', feedData);
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 px-4 py-12">
@@ -131,6 +136,28 @@ const Feed = () => {
               : "Discover talented developers in your network"}
           </p>
         </div>
+        {hasNextPage && (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="
+        px-6
+        py-3
+        rounded-xl
+        bg-indigo-600
+        text-white
+        font-medium
+        hover:bg-indigo-700
+        disabled:opacity-50
+      "
+            >
+              {isFetchingNextPage
+                ? "Loading..."
+                : "Load More"}
+            </button>
+          </div>
+        )}
 
         {/* Feed Grid or Empty State */}
         {feedData?.length === 0 ? (
@@ -161,6 +188,7 @@ const Feed = () => {
         )}
       </div>
     </div>
+
   );
 };
 
