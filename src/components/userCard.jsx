@@ -95,6 +95,32 @@ const UserCard = ({ user }) => {
           </div>
         </div>
 
+        {/* Bio / About */}
+        {user.about && (
+          <p className="mt-4 text-xs text-gray-650 line-clamp-2 italic">
+            "{user.about}"
+          </p>
+        )}
+
+        {/* Skills */}
+        {user.skills && user.skills.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {user.skills.slice(0, 4).map((skill, index) => (
+              <span
+                key={index}
+                className="px-2 py-0.5 text-[10px] font-medium rounded-md bg-gray-100 text-gray-650 border border-gray-200 capitalize"
+              >
+                {skill}
+              </span>
+            ))}
+            {user.skills.length > 4 && (
+              <span className="px-2 py-0.5 text-[10px] font-medium rounded-md bg-gray-50 text-gray-500 border border-gray-150">
+                +{user.skills.length - 4} more
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Divider */}
         <div className="my-4 border-t border-gray-100" />
 

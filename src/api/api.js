@@ -5,9 +5,11 @@ export const signupAPI= (data)=>apiClient.post('/user/auth/signup',data);
 export const fetchProfile =()=>apiClient.get('/user/profile/view/',{withCredentials:true});
 export const logoutAPI =()=>apiClient.get('/user/auth/logout/',{withCredentials:true});
 
-export const feedAPI = async ({ pageParam = 1 }) => {
+export const feedAPI = async ({ pageParam = 1, queryKey }) => {
+  const filterParams = queryKey?.[1] || {};
+  const { search = "", skills = "" } = filterParams;
   const res = await apiClient.get(
-    `/user/feed?page=${pageParam}&limit=9`,
+    `/user/feed?page=${pageParam}&limit=9&search=${encodeURIComponent(search)}&skills=${encodeURIComponent(skills)}`,
     {
       withCredentials: true,
     }
