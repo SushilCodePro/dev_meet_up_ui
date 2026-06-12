@@ -70,20 +70,20 @@ const Feed = () => {
   console.log('feedDataf', feedData);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 px-4 py-2">
       <div className="max-w-6xl mx-auto">
         {/* Modern Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-indigo-50/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-indigo-100 mb-4">
+        <div className="text-center mb-2">
+          {/* <div className="inline-flex items-center gap-1 bg-indigo-50/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-indigo-100 mb-2">
             <svg className="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span className="text-xs font-medium text-indigo-600">Discover</span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent tracking-tight">
+          </div> */}
+          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent tracking-tight">
             People You May Know
           </h1>
-          <p className="mt-3 text-gray-500 max-w-md mx-auto">
+          <p className="mt-1 text-gray-500 max-w-md mx-auto">
             {feedData?.length > 0
               ? `${feedData.length} developer${feedData.length !== 1 ? "s" : ""} waiting to connect with you`
               : "Discover talented developers in your network"}
