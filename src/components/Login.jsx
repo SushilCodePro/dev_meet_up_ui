@@ -71,7 +71,7 @@ export default function Auth() {
       </h1>
 
       <div className="pt-20 pb-10 flex items-center justify-center">
-        <div className="h-[500px] max-w-3xl w-full bg-white rounded-lg shadow-lg flex overflow-hidden">
+        <div className="min-h-[500px] h-auto max-w-3xl w-full bg-white rounded-lg shadow-lg flex overflow-hidden">
           {/* Left image */}
           <div
             className="hidden md:block md:w-1/2 bg-cover bg-center"
@@ -195,6 +195,24 @@ export default function Auth() {
               {mutation.isSuccess && (
                 <div className="text-green-600">
                   Success: {mutation?.data?.message}
+                </div>
+              )}
+
+              {isLogin && (
+                <div className="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-md text-xs text-indigo-900">
+                  <p className="font-semibold mb-1">🔑 Interviewer / Demo Account:</p>
+                  <p className="mb-0.5">Email: <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-150">kotak@gmail.com</span></p>
+                  <p className="mb-2">Password: <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-150">Kotak@123</span></p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEmail("kotak@gmail.com");
+                      setPassword("Kotak@123");
+                    }}
+                    className="text-indigo-700 hover:text-indigo-900 font-semibold underline cursor-pointer"
+                  >
+                    ⚡ Click to Autofill
+                  </button>
                 </div>
               )}
             </form>
