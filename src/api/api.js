@@ -19,6 +19,10 @@ export const feedAPI = async ({ pageParam = 1, queryKey }) => {
 };
 
 export const profileUpdateAPI =(data)=>apiClient.post('/user/profile/update/',data,{withCredentials:true});
+export const uploadPhotoAPI =(data)=>apiClient.post('/user/profile/upload-photo',data,{
+  withCredentials:true, 
+  headers: { "Content-Type": "multipart/form-data" }
+});
 export const sendRequestAPI = ({ status, toUserId }) => apiClient.post(`/user/request/send/${status}/${toUserId}`, {}, { withCredentials: true });
 export const recievedRequestAPI = ({ status, requestedId }) => apiClient.post(`/user/request/receive/${status}/${requestedId}`, {}, { withCredentials: true });
 export const gotRequestAPI =()=>apiClient.get('/user/request/recieved/',{withCredentials:true});

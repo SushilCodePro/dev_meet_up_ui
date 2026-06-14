@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* // Add this to your global CSS or Tailwind config for the fade-in animation */
  @keyframes fade-in {
    from { opacity: 0; transform: translateY(-5px); }
