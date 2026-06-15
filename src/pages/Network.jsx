@@ -38,7 +38,7 @@ const Network = () => {
   };
 
   const handleReject = (userId) => {
-    gotRequestMutation.mutate({ status: "interested", requestedId: userId });
+    gotRequestMutation.mutate({ status: "rejected", requestedId: userId });
   };
 
   if (isRequestLoading || isConnectionLoading) {
@@ -67,7 +67,11 @@ const Network = () => {
                 {requestData?.data?.map((request) => (
                   <UserCard
                     key={request._id}
-                    user={request?.fromUserId}
+                    user={request.fromUserId}
+                    leftStatus="rejected"
+                    rightStatus="accepted"
+                    handleLeftStatus={() => handleReject(request._id)}
+                    handleRightStatus={() => handleAccept(request._id)}
                   />
                 ))}
               </div>
@@ -98,7 +102,7 @@ const Network = () => {
                           {user?.fromUserId?.firstName} {user?.fromUserId?.lastName}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Age: {user?.fromUserId?.age} | {user?.fromUserId?.gender?.charAt(0).toUpperCase()} 
+                          Age: {user?.fromUserId?.age} | {user?.fromUserId?.gender?.charAt(0).toUpperCase()}
                         </p>
                       </div>
                     </div>

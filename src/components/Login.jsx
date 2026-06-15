@@ -200,7 +200,7 @@ export default function Auth() {
 
               {isLogin && (
                 <div className="mt-4 p-3 bg-indigo-50 border border-indigo-200 rounded-md text-xs text-indigo-900">
-                  <p className="font-semibold mb-1">🔑 Interviewer / Demo Account:</p>
+                  <p className="font-semibold mb-1">🔑 Demo Account:</p>
                   <p className="mb-0.5">Email: <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-150">kotak@gmail.com</span></p>
                   <p className="mb-2">Password: <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-indigo-150">Kotak@123</span></p>
                   <button

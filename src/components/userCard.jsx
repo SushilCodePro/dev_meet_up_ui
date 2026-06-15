@@ -17,7 +17,7 @@ function getColorClass(name = "") {
   return avatarColors[code % avatarColors.length];
 }
 
-const UserCard = ({ user }) => {
+const UserCard = ({ user, leftStatus = "ignored", rightStatus = "interested", handleLeftStatus, handleRightStatus }) => {
   const { _id: userId, firstName, lastName, age, gender, photoUrl } = user;
   const queryClient = useQueryClient();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -131,7 +131,7 @@ const UserCard = ({ user }) => {
         {/* Action Buttons with Loading States */}
         <div className="flex gap-3">
           <button
-            onClick={() => handleAction("ignored")}
+            onClick={handleLeftStatus ? handleLeftStatus : () => handleAction("ignored")}
             disabled={isPending}
             className={`
               flex-1 py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer
@@ -147,12 +147,12 @@ const UserCard = ({ user }) => {
                 <span>Ignoring</span>
               </div>
             ) : (
-              "Ignore"
+              leftStatus
             )}
           </button>
 
           <button
-            onClick={() => handleAction("interested")}
+            onClick={handleRightStatus ? handleRightStatus : () => handleAction("interested")}
             disabled={isPending}
             className={`
               flex-1 py-2.5 px-3 rounded-xl text-sm font-medium text-white transition-all duration-200 cursor-pointer
@@ -169,7 +169,7 @@ const UserCard = ({ user }) => {
                 <span>Sending</span>
               </div>
             ) : (
-              "Interested"
+              rightStatus
             )}
           </button>
         </div>
