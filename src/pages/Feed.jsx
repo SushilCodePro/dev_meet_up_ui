@@ -150,7 +150,7 @@ const Feed = () => {
             {error?.response?.status === 401 ? (
               <>
                 <p className="text-gray-900 dark:text-white font-semibold text-lg mb-2 transition-colors">Authentication Required</p>
-                <p className="text-sm text-gray-500 dark:text-slate-400 mb-6 transition-colors">Please allow third-party cookies and refresh the page.</p>
+                <p className="text-sm text-red-500 dark:text-red-400 mb-6 transition-colors">Please allow third-party cookies and refresh the page.</p>
                 <button
                   onClick={() => window.location.reload()}
                   className="px-5 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors cursor-pointer"
