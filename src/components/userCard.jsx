@@ -19,6 +19,7 @@ function getColorClass(name = "") {
 
 const UserCard = ({ user, leftStatus = "ignored", rightStatus = "interested", handleLeftStatus, handleRightStatus }) => {
   const { _id: userId, firstName, lastName, age, gender, photoUrl } = user;
+  // console.log('user in card',user);
   const queryClient = useQueryClient();
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -93,9 +94,9 @@ const UserCard = ({ user, leftStatus = "ignored", rightStatus = "interested", ha
             </div>
 
             {/* Role badge */}
-            <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 transition-colors">
+            {/* <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-medium rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 transition-colors">
               Developer
-            </span>
+            </span> */}
           </div>
         </div>
 

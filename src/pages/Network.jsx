@@ -23,6 +23,8 @@ const Network = () => {
     queryFn: myConnectionAPI,
   });
 
+  console.log('data in my conntection', connectionData);
+
   const queryClient = useQueryClient();
 
   const gotRequestMutation = useMutation({
@@ -68,8 +70,8 @@ const Network = () => {
                   <UserCard
                     key={request._id}
                     user={request.fromUserId}
-                    leftStatus="rejected"
-                    rightStatus="accepted"
+                    leftStatus="Reject"
+                    rightStatus="Accept"
                     handleLeftStatus={() => handleReject(request._id)}
                     handleRightStatus={() => handleAccept(request._id)}
                   />
@@ -95,14 +97,22 @@ const Network = () => {
                   >
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold flex-shrink-0">
-                        {user?.fromUserId?.firstName?.charAt(0)}{user?.fromUserId?.lastName?.charAt(0)}
+                        {user?.photoUrl ? (
+                          <img
+                            src={user?.photoUrl}
+                            alt={user?.firstName}
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          `${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`
+                        )}
                       </div>
                       <div>
                         <p className="text-base font-semibold text-slate-800 dark:text-slate-200">
-                          {user?.fromUserId?.firstName} {user?.fromUserId?.lastName}
+                          {user?.firstName} {user?.lastName}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Age: {user?.fromUserId?.age} | {user?.fromUserId?.gender?.charAt(0).toUpperCase()}
+                          Age: {user?.age} | {user?.gender?.charAt(0).toUpperCase()}
                         </p>
                       </div>
                     </div>
