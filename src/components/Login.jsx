@@ -41,6 +41,8 @@ export default function Auth() {
     },
   });
 
+  // console.log('login loading...', mutation.isPending)
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isLogin) {
@@ -180,10 +182,10 @@ export default function Auth() {
 
               <button
                 type="submit"
-                disabled={mutation.isLoading}
-                className="w-full py-2 mb-4 rounded bg-gray-900 text-white font-semibold hover:bg-gray-800 transition"
+                disabled={mutation.isPending}
+                className={`${mutation.isPending? 'bg-gray-500':'bg-gray-900'} w-full py-2 mb-4 rounded  text-white font-semibold hover:bg-gray-800 transition`}
               >
-                {mutation.isLoading ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
+                {mutation.isPending ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
               </button>
 
               {mutation.isError && (
