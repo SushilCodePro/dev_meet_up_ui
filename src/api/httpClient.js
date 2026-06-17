@@ -16,11 +16,24 @@ const apiClient = axios.create({
 //   return config;
 // });
 
-apiClient.interceptors.response.use(
-  (res) => res.data,
-  (error) => {
-    console.error('API call failed:', error.response?.data || error.message);
-    return Promise.reject(error);
+axios.interceptors.response.use((res) => res,async (error) => {
+
+const original = error.config;
+
+if (error.response?.status === 401 && !original._retry) {
+  original._retry = true;
+  await axios.post("/auth/refresh",{},{withCredentials: true});
+
+      return axios(
+        original
+      );
+
+    }
+
+    return Promise.reject(
+      error
+    );
+
   }
 );
 
