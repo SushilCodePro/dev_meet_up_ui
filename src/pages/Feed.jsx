@@ -36,6 +36,8 @@ const Feed = () => {
   const [search, setSearch] = useState("");
   const [skills, setSkills] = useState("");
 
+  const dispatch = useDispatch();
+
   const debouncedSearch = useDebounce(search, 500);
   const debouncedSkills = useDebounce(skills, 500);
 
@@ -65,9 +67,14 @@ const Feed = () => {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
-
+  // const feedData = data
   const feedData = data?.pages?.flatMap((page) => page.users) || [];
   console.log('feedDataf', feedData);
+  useEffect(() => {
+    if (feedData.length > 0) {
+      dispatch(addFeed(feedData));
+    }
+  }, [feedData, dispatch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-2 transition-colors duration-200">

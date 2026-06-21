@@ -15,7 +15,7 @@ export const feedAPI = async ({ pageParam = 1, queryKey }) => {
     }
   );
 
-  return res;
+  return res.data;
 };
 
 export const profileUpdateAPI =(data)=>apiClient.post('/user/profile/update/',data,{withCredentials:true});

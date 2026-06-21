@@ -62,11 +62,11 @@ const Network = () => {
               Connection Requests
             </h2>
 
-            {requestData?.data?.length === 0 ? (
+            {requestData?.data?.data?.length === 0 ? (
               <p className="text-slate-500 dark:text-slate-400">No requests found</p>
             ) : (
               <div className="space-y-4">
-                {requestData?.data?.map((request) => (
+                {requestData?.data?.data?.map((request) => (
                   <UserCard
                     key={request._id}
                     user={request.fromUserId}
@@ -86,11 +86,11 @@ const Network = () => {
               My Connections
             </h2>
 
-            {connectionData?.data?.length === 0 ? (
+            {connectionData?.data?.data?.length === 0 ? (
               <p className="text-slate-500 dark:text-slate-400">No connections yet</p>
             ) : (
               <div className="space-y-4">
-                {connectionData?.data?.map((user) => (
+                {connectionData?.data?.data?.map((user) => (
                   <div
                     key={user._id}
                     className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md dark:hover:shadow-slate-900/50 transition-all"

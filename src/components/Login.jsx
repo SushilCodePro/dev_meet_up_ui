@@ -26,7 +26,7 @@ export default function Auth() {
       : signupAPI,
     onSuccess: (data) => {
       console.log(isLogin ? "login res" : "signup res", data);
-      dispatch(addUser(data));
+      dispatch(addUser(data?.data?.safeUser));
       if (isLogin) {
         // login success
         navigate("/feed");
@@ -183,7 +183,7 @@ export default function Auth() {
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className={`${mutation.isPending? 'bg-gray-500':'bg-gray-900'} w-full py-2 mb-4 rounded  text-white font-semibold hover:bg-gray-800 transition`}
+                className={`${mutation.isPending ? 'bg-gray-500' : 'bg-gray-900'} w-full py-2 mb-4 rounded  text-white font-semibold hover:bg-gray-800 transition`}
               >
                 {mutation.isPending ? (isLogin ? "Logging in..." : "Signing up...") : (isLogin ? "Login" : "Sign Up")}
               </button>
