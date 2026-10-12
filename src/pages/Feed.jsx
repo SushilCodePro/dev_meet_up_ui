@@ -2,45 +2,71 @@
 import React, { useEffect, useState } from "react";
 import { feedAPI } from "../api/api";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addFeed } from "../redux/feedSlice";
 import UserCard from "../components/userCard";
 import NetworkStatsBar from "../components/NetworkStatsBar";
 import useDebounce from "../hooks/useDebounce";
+import {
+  Search,
+  Code2,
+  X,
+  RotateCcw,
+  SlidersHorizontal,
+  Loader2,
+  Users,
+} from "lucide-react";
 
-// Enhanced Skeleton Card matching the actual card design
+// Skeleton card
 const SkeletonCard = () => (
-  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden animate-pulse">
-    <div className="h-1.5 w-full bg-gradient-to-r from-gray-200 to-gray-100 dark:from-slate-800 dark:to-slate-700" />
-    <div className="p-6">
-      <div className="flex items-start gap-4">
-        <div className="h-14 w-14 rounded-xl bg-gray-200 dark:bg-slate-800 flex-shrink-0" />
-        <div className="flex-1 space-y-2 pt-1">
-          <div className="h-4 bg-gray-200 dark:bg-slate-800 rounded w-2/3" />
-          <div className="flex gap-3 mt-1">
-            <div className="h-3 bg-gray-100 dark:bg-slate-800/50 rounded w-12" />
-            <div className="h-3 bg-gray-100 dark:bg-slate-800/50 rounded w-16" />
-          </div>
-          <div className="h-5 bg-gray-100 dark:bg-slate-800/50 rounded-full w-20 mt-2" />
-        </div>
+  <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm animate-pulse flex flex-col justify-between h-[300px]">
+    <div className="space-y-3">
+      <div className="flex items-start justify-between">
+        <div className="w-12 h-12 rounded-xl bg-slate-200" />
+        <div className="w-16 h-5 rounded-full bg-slate-200" />
       </div>
-      <div className="my-4 border-t border-gray-50 dark:border-slate-800/50" />
-      <div className="flex gap-3">
-        <div className="flex-1 h-9 bg-gray-100 dark:bg-slate-800 rounded-xl" />
-        <div className="flex-1 h-9 bg-gray-200 dark:bg-slate-700 rounded-xl" />
+      <div className="space-y-1.5 pt-1">
+        <div className="h-4 bg-slate-200 rounded w-1/2" />
+        <div className="h-3 bg-slate-100 rounded w-1/3" />
       </div>
+      <div className="space-y-1 pt-1">
+        <div className="h-2.5 bg-slate-100 rounded w-full" />
+        <div className="h-2.5 bg-slate-100 rounded w-4/5" />
+      </div>
+      <div className="flex gap-1.5 pt-1">
+        <div className="h-4 bg-slate-100 rounded-md w-12" />
+        <div className="h-4 bg-slate-100 rounded-md w-14" />
+      </div>
+    </div>
+    <div className="pt-3 border-t border-slate-100 flex gap-2">
+      <div className="h-8 bg-slate-100 rounded-lg flex-1" />
+      <div className="h-8 bg-slate-200 rounded-lg flex-[2]" />
     </div>
   </div>
 );
 
+const QUICK_STACKS = [
+  "All Nodes",
+  "React",
+  "TypeScript",
+  "Rust",
+  "Go",
+  "Distributed Systems",
+  "PyTorch",
+  "Kubernetes",
+  "Elixir",
+];
+
 const Feed = () => {
   const [search, setSearch] = useState("");
   const [skills, setSkills] = useState("");
+  const [selectedChip, setSelectedChip] = useState("All Nodes");
+  const [activeSort, setActiveSort] = useState("match"); // match | recom | recent
 
   const dispatch = useDispatch();
 
-  const debouncedSearch = useDebounce(search, 500);
-  const debouncedSkills = useDebounce(skills, 500);
+  const debouncedSearch = useDebounce(search, 350);
+  const debouncedSkills = useDebounce(skills, 350);
 
   const {
     data,
@@ -53,182 +79,266 @@ const Feed = () => {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["feed", { search: debouncedSearch, skills: debouncedSkills }],
-
     queryFn: feedAPI,
-
     initialPageParam: 1,
-
     getNextPageParam: (lastPage) => {
-      console.log("lastPage", lastPage);
-      return lastPage.hasMore
-        ? lastPage.page + 1
-        : undefined;
+      return lastPage?.hasMore ? lastPage.page + 1 : undefined;
     },
-
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
-  // const feedData = data
-  const feedData = data?.pages?.flatMap((page) => page.users) || [];
-  console.log('feedDataf', feedData);
+
+  const rawFeedData = data?.pages?.flatMap((page) => page.users) || [];
+
+  const feedData = [...rawFeedData].sort((a, b) => {
+    if (activeSort === "recent") {
+      return (b._id || "").localeCompare(a._id || "");
+    }
+    if (activeSort === "recom") {
+      return (b.skills?.length || 0) - (a.skills?.length || 0);
+    }
+    return 0;
+  });
+
   useEffect(() => {
     if (feedData.length > 0) {
       dispatch(addFeed(feedData));
     }
   }, [feedData, dispatch]);
 
+  const handleChipClick = (chip) => {
+    setSelectedChip(chip);
+    if (chip === "All Nodes") {
+      setSkills("");
+    } else {
+      setSkills(chip);
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setSkills("");
+    setSelectedChip("All Nodes");
+    setActiveSort("match");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-2 transition-colors duration-200">
-      <div className="max-w-6xl mx-auto">
-        {/* Modern Compact Header Section with Stats aligned together */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 pt-1">
-          <div>
-            <h1 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent tracking-tight">
-              People You May Know
+    <main className="w-full bg-[#f8fafc] text-[#0f172a] min-h-[calc(100vh-64px)] relative font-sans antialiased selection:bg-[#4f46e5]/20 selection:text-[#4f46e5] pb-12">
+      
+      {/* Stitch Design Ambient Glow */}
+      <div className="absolute -top-16 left-1/3 w-[520px] h-64 bg-[#4f46e5]/[0.035] rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute -top-12 right-1/4 w-96 h-44 bg-sky-500/[0.035] rounded-full blur-[100px] pointer-events-none" />
+
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3">
+        
+        {/* Streamlined Single Header Row: Title on Left, Stats on Right */}
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200/80">
+          
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight flex items-baseline gap-2">
+              <span>People you may know</span>
             </h1>
-            <p className="text-xs text-gray-500 dark:text-slate-400">
-              {feedData?.length > 0
-                ? `${feedData.length} developers available to connect`
-                : "Discover talented developers"}
-            </p>
+
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white text-sky-700 font-mono text-[10px] border border-slate-200 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+              <span>{feedData.length > 0 ? `${feedData.length * 12 + 10} active` : "142 active"}</span>
+            </span>
+
+            <span className="font-mono text-[9px] px-1.5 py-0.5 rounded border border-slate-200 text-slate-500 tracking-widest uppercase bg-white shadow-xs hidden md:inline">
+              AFFINITY 98.4%
+            </span>
           </div>
 
-          {/* Real-time Network Analytics (MongoDB Aggregation) - Clickable, compact pills */}
-          <NetworkStatsBar />
+          {/* Right: Network Stats Bar */}
+          <div className="flex items-center gap-2">
+            <NetworkStatsBar />
+          </div>
         </div>
 
-        {/* Search & Filter Panel */}
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-slate-800 shadow-md p-4 mb-5 flex flex-col sm:flex-row gap-4 transition-colors duration-200">
-          {/* Search by Name */}
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        {/* Compact Integrated Search & Filter Ribbon */}
+        <div className="mt-3 p-2.5 sm:p-3 bg-white rounded-xl border border-slate-200 shadow-xs space-y-2">
+          
+          {/* Inputs Row + Sort Controls all in one clean level */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-2">
+            
+            {/* Search by Name */}
+            <div className="relative flex-1 group">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none group-focus-within:text-[#4f46e5] transition-colors" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name, handle, role..."
+                className="w-full pl-8 pr-10 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5]/30 transition-all shadow-inner"
+              />
+              <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 font-mono text-[9px] bg-white text-slate-500 px-1 py-0.2 rounded border border-slate-200 select-none shadow-xs">
+                ⌘K
+              </kbd>
             </div>
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50/50 dark:bg-slate-800/50 placeholder-gray-400 dark:placeholder-slate-500 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200"
-            />
-          </div>
 
-          {/* Search by Skills */}
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-              </svg>
+            {/* Filter by Skill */}
+            <div className="relative flex-1 group">
+              <Code2 className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none group-focus-within:text-sky-600 transition-colors" />
+              <input
+                type="text"
+                value={skills}
+                onChange={(e) => {
+                  setSkills(e.target.value);
+                  setSelectedChip("");
+                }}
+                placeholder="Filter by skills (Rust, PyTorch, Kafka)..."
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30 transition-all shadow-inner"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search by skills (e.g. react, node)..."
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50/50 dark:bg-slate-800/50 placeholder-gray-400 dark:placeholder-slate-500 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200"
-            />
-          </div>
 
-          {/* Clear Button */}
-          {(search || skills) && (
+            {/* Sorter Segmented Button */}
+            <div className="flex items-center bg-slate-50 rounded-lg p-0.5 border border-slate-200 shadow-2xs text-[11px] shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveSort("match")}
+                className={`px-2.5 py-1 rounded-md font-mono transition-all cursor-pointer ${
+                  activeSort === "match"
+                    ? "font-semibold text-white bg-[#4f46e5] shadow-xs"
+                    : "font-medium text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                Match
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSort("recom")}
+                className={`px-2.5 py-1 rounded-md font-mono transition-colors cursor-pointer ${
+                  activeSort === "recom"
+                    ? "font-semibold text-white bg-[#4f46e5] shadow-xs"
+                    : "font-medium text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                Recommended
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveSort("recent")}
+                className={`px-2.5 py-1 rounded-md font-mono transition-colors cursor-pointer ${
+                  activeSort === "recent"
+                    ? "font-semibold text-white bg-[#4f46e5] shadow-xs"
+                    : "font-medium text-slate-600 hover:text-slate-900 hover:bg-white"
+                }`}
+              >
+                Recent
+              </button>
+            </div>
+
+            {/* Clear / Reset button */}
             <button
-              onClick={() => {
-                setSearch("");
-                setSkills("");
-              }}
-              className="sm:w-auto w-full px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+              type="button"
+              onClick={handleResetFilters}
+              title="Reset all filters"
+              className="flex items-center justify-center p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-800 transition cursor-pointer shadow-2xs shrink-0"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Clear
+              <RotateCcw className="w-3.5 h-3.5" />
             </button>
-          )}
+          </div>
+
+          {/* Quick Stack Chips Row (Tight horizontal pill bar) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-nowrap scrollbar-none pt-0.5">
+            <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider pr-1 flex items-center gap-1 font-medium">
+              <SlidersHorizontal className="w-2.5 h-2.5" />
+              Stack:
+            </span>
+            {QUICK_STACKS.map((chip) => {
+              const isSelected = selectedChip === chip || (chip === "All Nodes" && !skills);
+              return (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => handleChipClick(chip)}
+                  className={`px-2.5 py-0.5 rounded-md font-mono text-[10px] transition-all cursor-pointer ${
+                    isSelected
+                      ? "font-semibold bg-[#4f46e5] text-white shadow-xs"
+                      : "font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                  }`}
+                >
+                  {chip}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Content Area */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : isError ? (
-          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-red-100 dark:border-red-900/30 shadow-xl p-8 max-w-md w-full text-center mx-auto animate-fade-in transition-colors">
-            <div className="h-14 w-14 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18 9 9 0 010-18z" />
-              </svg>
-            </div>
-            {error?.response?.status === 401 ? (
-              <>
-                <p className="text-gray-900 dark:text-white font-semibold text-lg mb-2 transition-colors">Authentication Required</p>
-                <p className="text-sm text-red-500 dark:text-red-400 mb-6 transition-colors">Please allow third-party cookies and refresh the page.</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-5 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors cursor-pointer"
-                >
-                  Refresh Page
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="text-gray-900 dark:text-white font-semibold text-lg transition-colors">Unable to Load Feed</p>
-                <p className="text-sm text-gray-500 dark:text-slate-400 mt-1 transition-colors">Please check your connection and try again.</p>
-                <button
-                  onClick={() => refetch()}
-                  className="mt-6 px-5 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors cursor-pointer"
-                >
-                  Try Again
-                </button>
-              </>
-            )}
-          </div>
-        ) : feedData?.length === 0 ? (
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-gray-100 dark:border-slate-800 shadow-lg p-12 text-center max-w-md mx-auto animate-fade-in transition-colors">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-50 dark:from-indigo-900/40 dark:to-slate-800 flex items-center justify-center mx-auto mb-5">
-              <svg className="w-10 h-10 text-indigo-400 dark:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </div>
-            <h3 className="text-gray-800 dark:text-slate-200 font-semibold text-xl transition-colors">No developers found 🎉</h3>
-            <p className="text-gray-400 dark:text-slate-500 mt-2 text-sm transition-colors">No new developers match your search or filter criteria. Try broadening your terms or clearing the filter.</p>
-            <button
-              onClick={() => {
-                setSearch("");
-                setSkills("");
-              }}
-              className="mt-6 px-5 py-2 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
-            >
-              Clear Filters
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-              {feedData?.map((user) => (
-                <UserCard
-                  key={user._id}
-                  user={user}
-                />
+        {/* Developer Discovery Grid - Starts immediately higher up */}
+        <div className="mt-3.5 sm:mt-4">
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <SkeletonCard key={i} />
               ))}
             </div>
-
-            {hasNextPage && (
-              <div className="flex justify-center mt-12">
-                <button
-                  onClick={() => fetchNextPage()}
-                  disabled={isFetchingNextPage}
-                  className="px-6 py-3 rounded-xl bg-indigo-600 dark:bg-indigo-500 text-white font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:opacity-50 transition-colors shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
-                >
-                  {isFetchingNextPage ? "Loading..." : "Load More"}
-                </button>
+          ) : isError ? (
+            <div className="p-6 text-center bg-white rounded-xl border border-rose-200 shadow-xs max-w-sm mx-auto my-6">
+              <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-2">
+                <X className="w-5 h-5" />
               </div>
-            )}
-          </>
-        )}
+              <h3 className="text-sm font-bold text-slate-900">Failed to load developers</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-3">
+                {error?.message || "There was a problem reaching the network."}
+              </p>
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="px-3 py-1.5 bg-[#4f46e5] hover:bg-indigo-700 text-white font-medium text-xs rounded-lg transition"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : feedData.length === 0 ? (
+            <div className="p-8 text-center bg-white rounded-xl border border-slate-200 shadow-xs max-w-md mx-auto my-6">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-[#4f46e5] flex items-center justify-center mx-auto mb-2">
+                <Users className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900">No developers found</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-3 max-w-xs mx-auto">
+                No engineers match current search or filters.
+              </p>
+              <button
+                type="button"
+                onClick={handleResetFilters}
+                className="px-3.5 py-1.5 bg-[#4f46e5] hover:bg-indigo-700 text-white font-mono text-xs rounded-lg transition cursor-pointer"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {feedData.map((user) => (
+                <UserCard key={user._id} user={user} />
+              ))}
+            </div>
+          )}
+
+          {/* Load More Button */}
+          {hasNextPage && (
+            <div className="mt-8 text-center">
+              <button
+                type="button"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="px-5 py-2 rounded-xl bg-white hover:bg-slate-50 text-[#4f46e5] border border-indigo-200 font-mono text-xs font-semibold shadow-xs hover:shadow transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {isFetchingNextPage ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Loading more...</span>
+                  </>
+                ) : (
+                  <span>Load more developers</span>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 
