@@ -5,6 +5,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSelector, useDispatch } from "react-redux";
 import { addFeed } from "../redux/feedSlice";
 import UserCard from "../components/userCard";
+import NetworkStatsBar from "../components/NetworkStatsBar";
 import useDebounce from "../hooks/useDebounce";
 
 // Enhanced Skeleton Card matching the actual card design
@@ -79,20 +80,25 @@ const Feed = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-2 transition-colors duration-200">
       <div className="max-w-6xl mx-auto">
-        {/* Modern Header Section */}
-        <div className="text-center mb-2">
-          <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent tracking-tight transition-colors">
-            People You May Know
-          </h1>
-          <p className="mt-1 text-gray-500 dark:text-slate-400 max-w-md mx-auto transition-colors">
-            {feedData?.length > 0
-              ? `${feedData.length} developer${feedData.length !== 1 ? "s" : ""} waiting to connect with you`
-              : "Discover talented developers in your network"}
-          </p>
+        {/* Modern Compact Header Section with Stats aligned together */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3 pt-1">
+          <div>
+            <h1 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent tracking-tight">
+              People You May Know
+            </h1>
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              {feedData?.length > 0
+                ? `${feedData.length} developers available to connect`
+                : "Discover talented developers"}
+            </p>
+          </div>
+
+          {/* Real-time Network Analytics (MongoDB Aggregation) - Clickable, compact pills */}
+          <NetworkStatsBar />
         </div>
 
         {/* Search & Filter Panel */}
-        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-slate-800 shadow-md p-6 mb-8 flex flex-col sm:flex-row gap-4 transition-colors duration-200">
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-slate-800 shadow-md p-4 mb-5 flex flex-col sm:flex-row gap-4 transition-colors duration-200">
           {/* Search by Name */}
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

@@ -27,3 +27,5 @@ export const sendRequestAPI = ({ status, toUserId }) => apiClient.post(`/user/re
 export const recievedRequestAPI = ({ status, requestedId }) => apiClient.post(`/user/request/receive/${status}/${requestedId}`, {}, { withCredentials: true });
 export const gotRequestAPI =()=>apiClient.get('/user/request/recieved/',{withCredentials:true});
 export const myConnectionAPI =()=>apiClient.get('/user/request/connection/',{withCredentials:true});
+export const getConnectionStatsAPI = () => apiClient.get('/user/request/stats', { withCredentials: true });
+
